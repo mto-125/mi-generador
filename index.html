@@ -2,82 +2,76 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Generador de Cómics con IA</title>
+    <title>AI Comic Studio</title>
     <style>
-        body { font-family: 'Comic Sans MS', cursive; background-color: #f0f0f0; text-align: center; padding: 20px; }
-        .comic-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 20px auto; }
-        .panel { border: 5px solid black; background: white; min-height: 400px; position: relative; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; }
-        .panel span { background: rgba(255,255,255,0.7); padding: 5px; font-weight: bold; }
-        input { padding: 12px; width: 60%; border: 3px solid black; border-radius: 5px; }
-        button { padding: 12px 25px; background: #ffcc00; border: 3px solid black; cursor: pointer; font-weight: bold; border-radius: 5px; }
-        button:hover { background: #ffaa00; }
-        #loading { display: none; color: blue; font-weight: bold; margin: 10px; }
+        :root { --primary: #ffcc00; --dark: #1a1a1a; }
+        body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; }
+        
+        /* Pantalla de Inicio */
+        #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .selector-container { display: flex; gap: 40px; margin-top: 30px; }
+        .card { width: 300px; padding: 40px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 10px 10px 0px var(--dark); }
+        .card:hover { transform: translate(-5px, -5px); box-shadow: 15px 15px 0px var(--primary); }
+        
+        /* El Editor (Oculto al inicio) */
+        #editor-screen { display: none; padding: 20px; text-align: center; }
+        .canvas-area { border: 5px dashed #666; background: white; margin: 20px auto; width: 800px; height: 500px; position: relative; }
+        
+        .hidden { display: none !important; }
+        button { padding: 10px 20px; font-weight: bold; border: 3px solid black; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <h1>Mago de Cómics IA 🎨</h1>
-    
-    <div id="setup">
-        <input type="password" id="apiKey" placeholder="Pega aquí tu API Key (sk-...)">
-        <p><small>Tu llave se guardará solo en este navegador para tu seguridad.</small></p>
+    <div id="home-screen">
+        <h1>¿QUÉ VAMOS A CREAR HOY?</h1>
+        <div class="selector-container">
+            <div class="card" onclick="mostrarEditor('ilustracion')">
+                <h2>🎨 ILUSTRACIÓN</h2>
+                <p>Una sola imagen épica. Ideal para posters o portadas.</p>
+            </div>
+            <div class="card" onclick="mostrarEditor('comic')">
+                <h2>📚 CÓMIC / MANGA</h2>
+                <p>Crea tus propias viñetas, define el estilo y cuenta una historia.</p>
+            </div>
+        </div>
     </div>
 
-    <hr>
+    <div id="editor-screen">
+        <button onclick="irAHome()">⬅ Volver</button>
+        <h2 id="modo-titulo">Modo Editor</h2>
+        
+        <div id="herramientas-comic">
+            <p>Dibuja los paneles de tu página abajo:</p>
+            <button onclick="setModo('dibujar')">Dibujar Línea</button>
+            <button onclick="setModo('mover')">Mover Líneas</button>
+            <select id="orden-lectura">
+                <option value="occidental">Orden Occidental (Izq a Der)</option>
+                <option value="oriental">Orden Oriental (Der a Izq)</option>
+            </select>
+        </div>
 
-    <input type="text" id="prompt" placeholder="Describe la escena (ej: Un astronauta bailando en la luna)">
-    <button onclick="generarImagen()">¡Generar Viñeta!</button>
-    
-    <div id="loading">La IA está dibujando... espera unos segundos ⏳</div>
-
-    <div class="comic-container">
-        <div class="panel" id="p1"><span>Panel 1</span></div>
+        <div class="canvas-area" id="lienzo">
+            <p style="color:#ccc; margin-top:200px;">[Aquí activaremos el dibujo de líneas en el siguiente paso]</p>
+        </div>
     </div>
 
     <script>
-        async function generarImagen() {
-            const prompt = document.getElementById('prompt').value;
-            const key = document.getElementById('apiKey').value;
-            const loading = document.getElementById('loading');
-            const panel1 = document.getElementById('p1');
-
-            if (!prompt || !key) {
-                alert("Por favor, escribe una descripción y asegúrate de haber pegado tu API Key.");
-                return;
+        function mostrarEditor(modo) {
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('editor-screen').style.display = 'block';
+            document.getElementById('modo-titulo').innerText = modo === 'ilustracion' ? 'Nueva Ilustración' : 'Diseño de Página de Cómic';
+            
+            if(modo === 'ilustracion') {
+                document.getElementById('herramientas-comic').classList.add('hidden');
+            } else {
+                document.getElementById('herramientas-comic').classList.remove('hidden');
             }
+        }
 
-            loading.style.display = "block";
-
-            try {
-                const response = await fetch('https://api.openai.com/v1/images/generations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${key}`
-                    },
-                    body: JSON.stringify({
-                        model: "dall-e-3",
-                        prompt: prompt,
-                        n: 1,
-                        size: "1024x1024"
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    alert("Error de OpenAI: " + data.error.message);
-                } else {
-                    const urlImagen = data.data[0].url;
-                    panel1.style.backgroundImage = `url('${urlImagen}')`;
-                    panel1.innerHTML = ""; // Quita el texto de "Panel 1"
-                }
-            } catch (error) {
-                alert("Hubo un error al conectar con la IA.");
-                console.error(error);
-            } finally {
-                loading.style.display = "none";
-            }
+        function irAHome() {
+            document.getElementById('home-screen').classList.remove('hidden');
+            document.getElementById('editor-screen').style.display = 'none';
         }
     </script>
 </body>
