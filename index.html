@@ -5,20 +5,34 @@
     <title>AI Comic Studio</title>
     <style>
         :root { --primary: #ffcc00; --dark: #1a1a1a; }
-        body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; }
+        body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; overflow-x: hidden; }
         
         /* Pantalla de Inicio */
         #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         .selector-container { display: flex; gap: 40px; margin-top: 30px; }
-        .card { width: 300px; padding: 40px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 10px 10px 0px var(--dark); }
+        .card { width: 300px; padding: 40px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 10px 10px 0px var(--dark); text-align: center; }
         .card:hover { transform: translate(-5px, -5px); box-shadow: 15px 15px 0px var(--primary); }
         
-        /* El Editor (Oculto al inicio) */
+        /* El Editor */
         #editor-screen { display: none; padding: 20px; text-align: center; }
-        .canvas-area { border: 5px dashed #666; background: white; margin: 20px auto; width: 800px; height: 500px; position: relative; }
+        .canvas-area { 
+            border: 5px solid black; 
+            background: white; 
+            margin: 20px auto; 
+            width: 800px; 
+            height: 600px; 
+            position: relative; 
+            cursor: crosshair;
+            overflow: hidden;
+        }
         
+        /* Estilo de las líneas dibujadas */
+        .guia-linea { position: absolute; background: black; transform-origin: 0 0; pointer-events: none; }
+
         .hidden { display: none !important; }
-        button { padding: 10px 20px; font-weight: bold; border: 3px solid black; cursor: pointer; }
+        .controls { margin-bottom: 20px; background: white; padding: 15px; border-bottom: 3px solid black; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        button { padding: 10px 20px; font-weight: bold; border: 3px solid black; cursor: pointer; background: var(--primary); }
+        button:hover { background: white; }
     </style>
 </head>
 <body>
@@ -28,42 +42,45 @@
         <div class="selector-container">
             <div class="card" onclick="mostrarEditor('ilustracion')">
                 <h2>🎨 ILUSTRACIÓN</h2>
-                <p>Una sola imagen épica. Ideal para posters o portadas.</p>
+                <p>Una sola imagen épica.</p>
             </div>
             <div class="card" onclick="mostrarEditor('comic')">
                 <h2>📚 CÓMIC / MANGA</h2>
-                <p>Crea tus propias viñetas, define el estilo y cuenta una historia.</p>
+                <p>Diseña tus viñetas y crea tu historia.</p>
             </div>
         </div>
     </div>
 
     <div id="editor-screen">
-        <button onclick="irAHome()">⬅ Volver</button>
-        <h2 id="modo-titulo">Modo Editor</h2>
+        <div class="controls">
+            <button onclick="irAHome()">⬅ Volver</button>
+            <strong id="modo-titulo">Editor</strong>
+            <div id="herramientas-comic">
+                <select id="orden-lectura">
+                    <option value="occidental">Lectura Occidental (Z)</option>
+                    <option value="oriental">Lectura Oriental (Manga)</option>
+                </select>
+                <button onclick="limpiarLienzo()" style="background: #ff4444; color: white;">Limpiar Todo</button>
+            </div>
+            <button onclick="alert('Pronto: Aquí conectaremos la IA con estos paneles')">¡Siguiente Paso!</button>
+        </div>
         
-        <div id="herramientas-comic">
-            <p>Dibuja los paneles de tu página abajo:</p>
-            <button onclick="setModo('dibujar')">Dibujar Línea</button>
-            <button onclick="setModo('mover')">Mover Líneas</button>
-            <select id="orden-lectura">
-                <option value="occidental">Orden Occidental (Izq a Der)</option>
-                <option value="oriental">Orden Oriental (Der a Izq)</option>
-            </select>
-        </div>
-
-        <div class="canvas-area" id="lienzo">
-            <p style="color:#ccc; margin-top:200px;">[Aquí activaremos el dibujo de líneas en el siguiente paso]</p>
-        </div>
+        <p>Haz clic y arrastra en el recuadro blanco para crear tus viñetas:</p>
+        <div class="canvas-area" id="lienzo"></div>
     </div>
 
     <script>
+        let dibujando = false;
+        let xInicio, yInicio;
+        const lienzo = document.getElementById('lienzo');
+
         function mostrarEditor(modo) {
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('editor-screen').style.display = 'block';
-            document.getElementById('modo-titulo').innerText = modo === 'ilustracion' ? 'Nueva Ilustración' : 'Diseño de Página de Cómic';
-            
+            document.getElementById('modo-titulo').innerText = modo === 'ilustracion' ? 'Nueva Ilustración' : 'Diseño de Paneles';
             if(modo === 'ilustracion') {
                 document.getElementById('herramientas-comic').classList.add('hidden');
+                lienzo.style.borderStyle = "solid";
             } else {
                 document.getElementById('herramientas-comic').classList.remove('hidden');
             }
@@ -72,6 +89,58 @@
         function irAHome() {
             document.getElementById('home-screen').classList.remove('hidden');
             document.getElementById('editor-screen').style.display = 'none';
+        }
+
+        function limpiarLienzo() {
+            lienzo.innerHTML = '';
+        }
+
+        // LÓGICA DE DIBUJO DE LÍNEAS RECTAS
+        lienzo.addEventListener('mousedown', (e) => {
+            dibujando = true;
+            const rect = lienzo.getBoundingClientRect();
+            xInicio = e.clientX - rect.left;
+            yInicio = e.clientY - rect.top;
+        });
+
+        window.addEventListener('mouseup', () => {
+            dibujando = false;
+        });
+
+        lienzo.addEventListener('mousemove', (e) => {
+            if (!dibujando) return;
+            
+            // Si queremos que las líneas se queden fijas, creamos un elemento
+            // Para esta versión simple, cada vez que sueltas se queda la línea.
+        });
+
+        lienzo.addEventListener('click', (e) => {
+            // Un sistema de "clic para inicio, clic para fin" es más fácil para empezar
+            const rect = lienzo.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (!window.puntoPendiente) {
+                window.puntoPendiente = {x, y};
+            } else {
+                crearLinea(window.puntoPendiente.x, window.puntoPendiente.y, x, y);
+                window.puntoPendiente = null;
+            }
+        });
+
+        function crearLinea(x1, y1, x2, y2) {
+            const linea = document.createElement('div');
+            linea.className = 'guia-linea';
+            const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const angulo = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            
+            linea.style.width = dist + 'px';
+            linea.style.height = '4px'; // Grosor de la línea del cómic
+            linea.style.left = x1 + 'px';
+            linea.style.top = y1 + 'px';
+            linea.style.transform = `rotate(${angulo}deg)`;
+            
+            lienzo.appendChild(linea);
         }
     </script>
 </body>
