@@ -2,18 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>AI Comic Studio</title>
+    <title>AI Comic Studio - Pro</title>
     <style>
         :root { --primary: #ffcc00; --dark: #1a1a1a; }
-        body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; }
         
-        /* Pantalla de Inicio */
         #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         .selector-container { display: flex; gap: 40px; margin-top: 30px; }
         .card { width: 300px; padding: 40px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 10px 10px 0px var(--dark); text-align: center; }
         .card:hover { transform: translate(-5px, -5px); box-shadow: 15px 15px 0px var(--primary); }
         
-        /* El Editor */
         #editor-screen { display: none; padding: 20px; text-align: center; }
         
         .canvas-area { 
@@ -25,54 +23,57 @@
             position: relative; 
             cursor: crosshair;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
+            background-size: cover;
+            background-position: center;
         }
         
         .guia-linea { position: absolute; background: black; transform-origin: 0 50%; pointer-events: none; z-index: 10; }
         #linea-temporal { background: rgba(255, 0, 0, 0.5); height: 2px !important; z-index: 5; position: absolute; }
 
         .hidden { display: none !important; }
-        .controls { margin-bottom: 20px; background: white; padding: 15px; border-bottom: 3px solid black; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        .controls { background: white; padding: 15px; border: 3px solid black; display: inline-block; margin-bottom: 10px; border-radius: 8px; }
+        input, select { padding: 8px; border: 2px solid black; margin: 5px; }
         button { padding: 10px 20px; font-weight: bold; border: 3px solid black; cursor: pointer; background: var(--primary); }
+        #loading { display: none; color: #e67e22; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="home-screen">
-        <h1>¿QUÉ VAMOS A CREAR HOY?</h1>
+        <h1>AI COMIC STUDIO</h1>
         <div class="selector-container">
-            <div class="card" onclick="activarEditor('ilustracion')">
-                <h2>🎨 ILUSTRACIÓN</h2>
-                <p>Una sola imagen épica.</p>
-            </div>
-            <div class="card" onclick="activarEditor('comic')">
-                <h2>📚 CÓMIC / MANGA</h2>
-                <p>Diseña tus viñetas.</p>
-            </div>
+            <div class="card" onclick="activarEditor('ilustracion')"><h2>🎨 ILUSTRACIÓN</h2></div>
+            <div class="card" onclick="activarEditor('comic')"><h2>📚 CÓMIC</h2></div>
         </div>
     </div>
 
     <div id="editor-screen">
         <div class="controls">
-            <button onclick="irAHome()">⬅ Volver</button>
-            <strong id="modo-titulo">Editor</strong>
-            <button onclick="limpiarLienzo()" style="background: #ff4444; color: white;">Limpiar Todo</button>
-            <button onclick="alert('¡Genial! Paneles listos. En el siguiente paso activaremos la IA.')">¡Siguiente!</button>
+            <input type="password" id="apiKey" placeholder="Pega tu API Key aquí">
+            <select id="estiloIA">
+                <option value="estilo manga detallado, blanco y negro, tramas clásicas">Manga B/N</option>
+                <option value="estilo cómic americano moderno, colores vibrantes, entintado fuerte">Marvel Style</option>
+                <option value="estilo acuarela conceptual, artístico, sin líneas de contorno">Acuarela</option>
+                <option value="estilo Cyberpunk futurista, luces de neón, retro-futurismo">Cyberpunk</option>
+            </select>
+            <br>
+            <input type="text" id="promptIA" style="width: 300px;" placeholder="¿Qué quieres que pase en la página?">
+            <button onclick="generarImagenIA()">✨ Generar Arte</button>
+            <button onclick="limpiarLienzo()" style="background:#ff4444; color:white;">Borrar Líneas</button>
+            <button onclick="irAHome()">Volver</button>
         </div>
         
-        <p>Pincha y arrastra dentro de la hoja para dibujar tus viñetas:</p>
+        <div id="loading">🎨 La IA está dibujando tu página... espera 15s</div>
+
         <div class="canvas-area" id="lienzo">
             <div id="linea-temporal" class="guia-linea" style="display:none"></div>
         </div>
     </div>
 
     <script>
-        // Funciones de navegación
         function activarEditor(modo) {
-            console.log("Cambiando a modo:", modo);
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('editor-screen').style.display = 'block';
-            document.getElementById('modo-titulo').innerText = modo === 'ilustracion' ? 'Modo Ilustración' : 'Modo Cómic (Dibuja tus paneles)';
         }
 
         function irAHome() {
@@ -80,7 +81,7 @@
             document.getElementById('editor-screen').style.display = 'none';
         }
 
-        // Lógica de dibujo
+        // --- LÓGICA DE DIBUJO ---
         let dibujando = false;
         let xInicio, yInicio;
         const lienzo = document.getElementById('lienzo');
@@ -89,6 +90,7 @@
         function limpiarLienzo() {
             const lineas = lienzo.querySelectorAll('.real-line');
             lineas.forEach(l => l.remove());
+            lienzo.style.backgroundImage = 'none';
         }
 
         lienzo.addEventListener('mousedown', (e) => {
@@ -96,49 +98,80 @@
             const rect = lienzo.getBoundingClientRect();
             xInicio = e.clientX - rect.left;
             yInicio = e.clientY - rect.top;
-            
             lineaTemporal.style.display = 'block';
-            actualizarPosicionLinea(lineaTemporal, xInicio, yInicio, xInicio, yInicio);
         });
 
         window.addEventListener('mousemove', (e) => {
             if (!dibujando) return;
             const rect = lienzo.getBoundingClientRect();
-            const xActual = e.clientX - rect.left;
-            const yActual = e.clientY - rect.top;
-            actualizarPosicionLinea(lineaTemporal, xInicio, yInicio, xActual, yActual);
+            actualizarPosicionLinea(lineaTemporal, xInicio, yInicio, e.clientX - rect.left, e.clientY - rect.top);
         });
 
         window.addEventListener('mouseup', (e) => {
             if (!dibujando) return;
             dibujando = false;
             lineaTemporal.style.display = 'none';
-            
             const rect = lienzo.getBoundingClientRect();
             const xFin = e.clientX - rect.left;
             const yFin = e.clientY - rect.top;
-            
-            if (Math.abs(xFin - xInicio) > 5 || Math.abs(yFin - yInicio) > 5) {
-                crearLineaFija(xInicio, yInicio, xFin, yFin);
-            }
+            if (Math.abs(xFin - xInicio) > 5) crearLineaFija(xInicio, yInicio, xFin, yFin);
         });
 
-        function actualizarPosicionLinea(lineaElement, x1, y1, x2, y2) {
+        function actualizarPosicionLinea(el, x1, y1, x2, y2) {
             const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
             const angulo = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
-            
-            lineaElement.style.width = dist + 'px';
-            lineaElement.style.left = x1 + 'px';
-            lineaElement.style.top = y1 + 'px';
-            lineaElement.style.transform = `rotate(${angulo}deg)`;
+            el.style.width = dist + 'px';
+            el.style.left = x1 + 'px';
+            el.style.top = y1 + 'px';
+            el.style.transform = `rotate(${angulo}deg)`;
         }
 
         function crearLineaFija(x1, y1, x2, y2) {
-            const nuevaLinea = document.createElement('div');
-            nuevaLinea.className = 'guia-linea real-line';
-            nuevaLinea.style.height = '4px';
-            actualizarPosicionLinea(nuevaLinea, x1, y1, x2, y2);
-            lienzo.appendChild(nuevaLinea);
+            const nl = document.createElement('div');
+            nl.className = 'guia-linea real-line';
+            nl.style.height = '6px'; // Línea más gruesa para que se vea mejor sobre el dibujo
+            actualizarPosicionLinea(nl, x1, y1, x2, y2);
+            lienzo.appendChild(nl);
+        }
+
+        // --- LÓGICA DE IA ---
+        async function generarImagenIA() {
+            const key = document.getElementById('apiKey').value;
+            const promptInput = document.getElementById('promptIA').value;
+            const estilo = document.getElementById('estiloIA').value;
+            const loading = document.getElementById('loading');
+
+            if (!key || !promptInput) {
+                alert("Necesitas poner tu API Key y una descripción.");
+                return;
+            }
+
+            loading.style.display = "block";
+            const promptFinal = `Composición de página de cómic con varios paneles, ${promptInput}, ${estilo}`;
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+                    body: JSON.stringify({
+                        model: "dall-e-3",
+                        prompt: promptFinal,
+                        n: 1, size: "1024x1024"
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    alert("Error: " + data.error.message);
+                } else {
+                    const url = data.data[0].url;
+                    lienzo.style.backgroundImage = `url('${url}')`;
+                }
+            } catch (err) {
+                alert("Error de conexión");
+            } finally {
+                loading.style.display = "none";
+            }
         }
     </script>
 </body>
