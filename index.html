@@ -7,20 +7,21 @@
         :root { --primary: #ffcc00; --dark: #1a1a1a; }
         body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; overflow-x: hidden; }
         
+        /* Pantalla de Inicio */
         #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         .selector-container { display: flex; gap: 40px; margin-top: 30px; }
         .card { width: 300px; padding: 40px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 10px 10px 0px var(--dark); text-align: center; }
         .card:hover { transform: translate(-5px, -5px); box-shadow: 15px 15px 0px var(--primary); }
         
+        /* El Editor */
         #editor-screen { display: none; padding: 20px; text-align: center; }
         
-        /* HOJA REALISTA: Formato A4 (proporción 1:1.4) */
         .canvas-area { 
             border: 2px solid #999; 
             background: white; 
             margin: 20px auto; 
-            width: 500px;  /* Ancho */
-            height: 700px; /* Alto rectangular */
+            width: 500px;  
+            height: 700px; 
             position: relative; 
             cursor: crosshair;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -28,7 +29,7 @@
         }
         
         .guia-linea { position: absolute; background: black; transform-origin: 0 50%; pointer-events: none; z-index: 10; }
-        #linea-temporal { background: rgba(255, 0, 0, 0.5); height: 2px !important; z-index: 5; }
+        #linea-temporal { background: rgba(255, 0, 0, 0.5); height: 2px !important; z-index: 5; position: absolute; }
 
         .hidden { display: none !important; }
         .controls { margin-bottom: 20px; background: white; padding: 15px; border-bottom: 3px solid black; display: flex; justify-content: center; gap: 15px; align-items: center; }
@@ -40,8 +41,14 @@
     <div id="home-screen">
         <h1>¿QUÉ VAMOS A CREAR HOY?</h1>
         <div class="selector-container">
-            <div class="card" onclick="mostrarEditor('ilustracion')"><h2>🎨 ILUSTRACIÓN</h2><p>Una sola imagen épica.</p></div>
-            <div class="card" onclick="mostrarEditor('comic')"><h2>📚 CÓMIC / MANGA</h2><p>Diseña tus viñetas.</p></div>
+            <div class="card" onclick="activarEditor('ilustracion')">
+                <h2>🎨 ILUSTRACIÓN</h2>
+                <p>Una sola imagen épica.</p>
+            </div>
+            <div class="card" onclick="activarEditor('comic')">
+                <h2>📚 CÓMIC / MANGA</h2>
+                <p>Diseña tus viñetas.</p>
+            </div>
         </div>
     </div>
 
@@ -50,24 +57,22 @@
             <button onclick="irAHome()">⬅ Volver</button>
             <strong id="modo-titulo">Editor</strong>
             <button onclick="limpiarLienzo()" style="background: #ff4444; color: white;">Limpiar Todo</button>
-            <button onclick="alert('Siguiente: Conectar IA')">¡Listo!</button>
+            <button onclick="alert('¡Genial! Paneles listos. En el siguiente paso activaremos la IA.')">¡Siguiente!</button>
         </div>
         
-        <p>Pincha y arrastra para dibujar los marcos de tus viñetas:</p>
+        <p>Pincha y arrastra dentro de la hoja para dibujar tus viñetas:</p>
         <div class="canvas-area" id="lienzo">
             <div id="linea-temporal" class="guia-linea" style="display:none"></div>
         </div>
     </div>
 
     <script>
-        let dibujando = false;
-        let xInicio, yInicio;
-        const lienzo = document.getElementById('lienzo');
-        const lineaTemporal = document.getElementById('linea-temporal');
-
-        function mostrarEditor(modo) {
+        // Funciones de navegación
+        function activarEditor(modo) {
+            console.log("Cambiando a modo:", modo);
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('editor-screen').style.display = 'block';
+            document.getElementById('modo-titulo').innerText = modo === 'ilustracion' ? 'Modo Ilustración' : 'Modo Cómic (Dibuja tus paneles)';
         }
 
         function irAHome() {
@@ -75,12 +80,17 @@
             document.getElementById('editor-screen').style.display = 'none';
         }
 
+        // Lógica de dibujo
+        let dibujando = false;
+        let xInicio, yInicio;
+        const lienzo = document.getElementById('lienzo');
+        const lineaTemporal = document.getElementById('linea-temporal');
+
         function limpiarLienzo() {
             const lineas = lienzo.querySelectorAll('.real-line');
             lineas.forEach(l => l.remove());
         }
 
-        // NUEVO MOTOR DE ARRASTRE
         lienzo.addEventListener('mousedown', (e) => {
             dibujando = true;
             const rect = lienzo.getBoundingClientRect();
@@ -88,7 +98,7 @@
             yInicio = e.clientY - rect.top;
             
             lineaTemporal.style.display = 'block';
-            actualizarLinea(lineaTemporal, xInicio, yInicio, xInicio, yInicio);
+            actualizarPosicionLinea(lineaTemporal, xInicio, yInicio, xInicio, yInicio);
         });
 
         window.addEventListener('mousemove', (e) => {
@@ -96,5 +106,40 @@
             const rect = lienzo.getBoundingClientRect();
             const xActual = e.clientX - rect.left;
             const yActual = e.clientY - rect.top;
+            actualizarPosicionLinea(lineaTemporal, xInicio, yInicio, xActual, yActual);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (!dibujando) return;
+            dibujando = false;
+            lineaTemporal.style.display = 'none';
             
-            actualizarLinea(lineaTemporal, xInicio, yInicio, x
+            const rect = lienzo.getBoundingClientRect();
+            const xFin = e.clientX - rect.left;
+            const yFin = e.clientY - rect.top;
+            
+            if (Math.abs(xFin - xInicio) > 5 || Math.abs(yFin - yInicio) > 5) {
+                crearLineaFija(xInicio, yInicio, xFin, yFin);
+            }
+        });
+
+        function actualizarPosicionLinea(lineaElement, x1, y1, x2, y2) {
+            const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const angulo = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            
+            lineaElement.style.width = dist + 'px';
+            lineaElement.style.left = x1 + 'px';
+            lineaElement.style.top = y1 + 'px';
+            lineaElement.style.transform = `rotate(${angulo}deg)`;
+        }
+
+        function crearLineaFija(x1, y1, x2, y2) {
+            const nuevaLinea = document.createElement('div');
+            nuevaLinea.className = 'guia-linea real-line';
+            nuevaLinea.style.height = '4px';
+            actualizarPosicionLinea(nuevaLinea, x1, y1, x2, y2);
+            lienzo.appendChild(nuevaLinea);
+        }
+    </script>
+</body>
+</html>
