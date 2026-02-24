@@ -1,37 +1,285 @@
-<div id="editor-screen" class="editor-container">
-    <div class="controls">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <input type="password" id="apiKey" placeholder="AUTH_KEY" style="width: 250px;">
-            <button class="secondary" onclick="location.reload()">⬅ Volver al Menú</button>
-        </div>
-        
-        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-        
-        <div id="zona-estilos">
-            <span class="label-instruccion">Definición de Estilo Artístico</span>
-            <textarea id="promptEstilo" rows="2" style="width: 85%;" placeholder="Mezcla de autores, técnica, iluminación..."></textarea>
-        </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>M-Studio | Premium AI Creative Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --gold: #c5a059; 
+            --dark-bg: #0f0f0f; 
+            --panel-bg: #1a1a1a;
+            --text-light: #e0e0e0;
+            --border: #333;
+        }
 
-        <div id="zona-subida" class="hidden">
-            <span class="label-instruccion">Carga de Documento Original</span>
-            <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
-            <span class="label-instruccion">Instrucciones de Procesado</span>
-            <textarea id="promptRetoque" rows="2" style="width: 85%;" placeholder="Coloreado, sombreado, entintado..."></textarea>
-        </div>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark-bg); 
+            color: var(--text-light);
+            margin: 0; 
+            min-height: 100vh;
+        }
 
-        <div id="zona-desc-general">
-            <span class="label-instruccion">Composición de la Escena</span>
-            <textarea id="promptEscena" rows="2" style="width: 85%;" placeholder="Descripción detallada de la narrativa..."></textarea>
-        </div>
+        h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
+
+        /* PANTALLA DE INICIO */
+        #home-screen { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh;
+            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
+        }
+
+        .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 10px; }
+        .subtitle { font-size: 0.9rem; color: #666; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 50px; }
+
+        .selector-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+
+        .card { 
+            width: 280px; 
+            padding: 40px 20px; 
+            background: var(--panel-bg); 
+            border: 1px solid var(--border); 
+            cursor: pointer; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .card:hover { 
+            border-color: var(--gold);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .card h2 { font-size: 1.2rem; color: var(--gold); margin-bottom: 15px; }
+        .card p { font-size: 0.85rem; color: #888; line-height: 1.6; }
+
+        /* EDITOR */
+        .editor-container { display: none; padding: 20px; text-align: center; animation: fadeIn 0.8s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 950px;
+            margin: 0 auto 20px auto;
+            padding: 10px;
+        }
+
+        .main-panel { 
+            background: var(--panel-bg); 
+            padding: 30px; 
+            border: 1px solid var(--border); 
+            display: inline-block; 
+            border-radius: 4px;
+            max-width: 950px;
+            margin-bottom: 30px;
+        }
+
+        input, textarea { 
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 2px;
+            width: 90%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button { 
+            padding: 12px 25px; 
+            font-family: 'Cinzel', serif;
+            font-weight: bold; 
+            border: 1px solid var(--gold); 
+            cursor: pointer; 
+            background: transparent; 
+            color: var(--gold);
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+        }
+
+        button:hover { background: var(--gold); color: black; }
+        .btn-back { border-color: #555; color: #888; }
+        .btn-back:hover { border-color: var(--gold); color: var(--gold); background: transparent; }
+
+        /* ÁREA DE TRABAJO */
+        .canvas-area { 
+            background: #fff;
+            margin: 0 auto; 
+            width: 500px;  
+            height: 700px; 
+            position: relative; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .guia-linea { position: absolute; background: #000; transform-origin: 0 50%; pointer-events: none; z-index: 10; }
+        #linea-temporal { background: var(--gold); height: 1px !important; z-index: 5; opacity: 0.6; position: absolute; }
+
+        #loading { display: none; color: var(--gold); letter-spacing: 2px; margin: 20px; font-family: 'Cinzel', serif; font-size: 0.9rem; }
+        .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #555; font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 10px; }
         
-        <br>
-        <button onclick="generarArte()">Generar Obra</button>
-        <button class="secondary" onclick="limpiarLienzo()">Limpiar Lienzo</button>
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="home-screen">
+        <div class="logo-main">M-STUDIO</div>
+        <div class="subtitle">Premium AI Creative Suite</div>
+        
+        <div class="selector-container">
+            <div class="card" onclick="abrir('ilustracion')">
+                <h2>ILUSTRACIÓN</h2>
+                <p>Síntesis de estilos maestros para piezas únicas.</p>
+            </div>
+            <div class="card" onclick="abrir('comic')">
+                <h2>CÓMIC</h2>
+                <p>Arquitectura de paneles y narrativa visual avanzada.</p>
+            </div>
+            <div class="card" style="border-color: var(--gold);" onclick="abrir('propia')">
+                <h2>OBRA PROPIA</h2>
+                <p>Refinamiento y procesado de trazos originales.</p>
+            </div>
+        </div>
     </div>
-    
-    <div id="loading">PROCESANDO SECUENCIA ARTÍSTICA...</div>
 
-    <div class="canvas-area" id="lienzo">
-        <div id="linea-temporal" class="guia-linea" style="display:none"></div>
+    <div id="editor-screen" class="editor-container">
+        
+        <div class="header-controls">
+            <input type="password" id="apiKey" placeholder="AUTH_KEY" style="width: 200px; margin: 0;">
+            <button class="btn-back" onclick="location.reload()">⬅ MENÚ PRINCIPAL</button>
+        </div>
+
+        <div class="main-panel">
+            <div id="zona-estilos">
+                <span class="label-instruccion">Estética Maestro</span>
+                <textarea id="promptEstilo" rows="2" placeholder="Mezcla de autores, técnica, iluminación..."></textarea>
+            </div>
+
+            <div id="zona-subida" class="hidden">
+                <span class="label-instruccion">Documento Original</span>
+                <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
+                <span class="label-instruccion">Instrucciones de Procesado</span>
+                <textarea id="promptRetoque" rows="2" placeholder="Coloreado, sombreado, entintado..."></textarea>
+            </div>
+
+            <div id="zona-desc-general">
+                <span class="label-instruccion">Descripción Narrativa</span>
+                <textarea id="promptEscena" rows="2" placeholder="Detalles de la escena..."></textarea>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button onclick="generarArte()">Generar Obra</button>
+                <button class="btn-back" style="border:none; text-decoration: underline;" onclick="limpiarLienzo()">Limpiar Lienzo</button>
+            </div>
+        </div>
+        
+        <div id="loading">PROCESANDO SECUENCIA ARTÍSTICA...</div>
+
+        <div class="canvas-area" id="lienzo">
+            <div id="linea-temporal" class="guia-linea" style="display:none"></div>
+        </div>
     </div>
-</div>
+
+    <script>
+        let modoActual = '';
+        const lienzo = document.getElementById('lienzo');
+        const lineaTemporal = document.getElementById('linea-temporal');
+        let dibujando = false;
+        let xInicio, yInicio;
+
+        function abrir(modo) {
+            modoActual = modo;
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('editor-screen').style.display = 'block';
+            if(modo === 'propia') {
+                document.getElementById('zona-estilos').classList.add('hidden');
+                document.getElementById('zona-subida').classList.remove('hidden');
+            } else {
+                document.getElementById('zona-estilos').classList.remove('hidden');
+                document.getElementById('zona-subida').classList.add('hidden');
+            }
+        }
+
+        function previsualizarImagen(event) {
+            const reader = new FileReader();
+            reader.onload = function() { lienzo.style.backgroundImage = `url('${reader.result}')`; }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        lienzo.addEventListener('mousedown', (e) => {
+            if(modoActual !== 'comic') return;
+            dibujando = true;
+            const rect = lienzo.getBoundingClientRect();
+            xInicio = e.clientX - rect.left; yInicio = e.clientY - rect.top;
+            lineaTemporal.style.display = 'block';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!dibujando) return;
+            const rect = lienzo.getBoundingClientRect();
+            actualizarLinea(lineaTemporal, xInicio, yInicio, e.clientX - rect.left, e.clientY - rect.top);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (!dibujando) return;
+            dibujando = false;
+            lineaTemporal.style.display = 'none';
+            const rect = lienzo.getBoundingClientRect();
+            crearLineaFija(xInicio, yInicio, e.clientX - rect.left, e.clientY - rect.top);
+        });
+
+        function actualizarLinea(el, x1, y1, x2, y2) {
+            const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const angulo = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            el.style.width = dist + 'px'; el.style.left = x1 + 'px'; el.style.top = y1 + 'px';
+            el.style.transform = `rotate(${angulo}deg)`;
+        }
+
+        function crearLineaFija(x1, y1, x2, y2) {
+            if (Math.abs(x2-x1) < 5) return;
+            const nl = document.createElement('div');
+            nl.className = 'guia-linea real-line';
+            nl.style.height = '4px';
+            actualizarLinea(nl, x1, y1, x2, y2);
+            lienzo.appendChild(nl);
+        }
+
+        function limpiarLienzo() {
+            const lines = lienzo.querySelectorAll('.real-line');
+            lines.forEach(l => l.remove());
+            lienzo.style.backgroundImage = 'none';
+        }
+
+        async function generarArte() {
+            const key = document.getElementById('apiKey').value;
+            if(!key) return alert("AUTH_KEY requerida");
+            document.getElementById('loading').style.display = 'block';
+            let pFinal = modoActual === 'propia' ? 
+                `Based on this sketch, apply: ${document.getElementById('promptRetoque').value}. Scene: ${document.getElementById('promptEscena').value}` :
+                `High-end art, style of ${document.getElementById('promptEstilo').value}. Scene: ${document.getElementById('promptEscena').value}`;
+            
+            try {
+                const res = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+                    body: JSON.stringify({ model: "dall-e-3", prompt: pFinal, n: 1, size: "1024x1024" })
+                });
+                const data = await res.json();
+                if(data.data) { lienzo.style.backgroundImage = `url('${data.data[0].url}')`; }
+                else { alert(data.error.message); }
+            } catch (e) { alert("Connection Error"); }
+            finally { document.getElementById('loading').style.display = 'none'; }
+        }
+    </script>
+</body>
+</html>
