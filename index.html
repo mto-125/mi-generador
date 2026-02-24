@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Creador de Cómics con IA</title>
+    <style>
+        body { font-family: 'Comic Sans MS', cursive; background-color: #f0f0f0; text-align: center; }
+        .comic-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px; margin: auto; padding: 20px; }
+        .panel { border: 5px solid black; background: white; height: 300px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        input { padding: 10px; width: 60%; font-size: 16px; border: 2px solid black; }
+        button { padding: 10px 20px; font-size: 16px; background: orange; border: 2px solid black; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Generador de Cómics con IA</h1>
+    <p>Escribe tu historia y pulsa el botón:</p>
+    <input type="text" id="prompt" placeholder="Ejemplo: Un gato astronauta en Marte">
+    <button onclick="generarComic()">¡Crear Magia!</button>
+
+    <div class="comic-container">
+        <div class="panel" id="p1">Panel 1</div>
+        <div class="panel" id="p2">Panel 2</div>
+        <div class="panel" id="p3">Panel 3</div>
+        <div class="panel" id="p4">Panel 4</div>
+    </div>
+
+    <script>
+        function generarComic() {
+            alert("¡Pronto conectaremos esto con la IA de DALL-E!");
+        }
+    </script>
+</body>
+</html>
