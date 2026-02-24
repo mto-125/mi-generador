@@ -23,7 +23,7 @@
 
         h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
-        /* PANTALLA DE INICIO */
+        /* PANTALLA DE INICIO - M-STUDIO */
         #home-screen { 
             display: flex; 
             flex-direction: column; 
@@ -48,6 +48,7 @@
             text-align: center;
         }
 
+        /* Efecto hover igual para todas las tarjetas */
         .card:hover { 
             border-color: var(--gold);
             transform: translateY(-10px);
@@ -91,6 +92,8 @@
             font-family: 'Inter', sans-serif;
         }
 
+        input:focus, textarea:focus { outline: 1px solid var(--gold); border-color: var(--gold); }
+
         button { 
             padding: 12px 25px; 
             font-family: 'Cinzel', serif;
@@ -109,7 +112,7 @@
         .btn-back { border-color: #555; color: #888; }
         .btn-back:hover { border-color: var(--gold); color: var(--gold); background: transparent; }
 
-        /* ÁREA DE TRABAJO */
+        /* ÁREA DE LIENZO */
         .canvas-area { 
             background: #fff;
             margin: 0 auto; 
@@ -145,7 +148,7 @@
                 <h2>CÓMIC</h2>
                 <p>Arquitectura de paneles y narrativa visual avanzada.</p>
             </div>
-            <div class="card" style="border-color: var(--gold);" onclick="abrir('propia')">
+            <div class="card" onclick="abrir('propia')">
                 <h2>OBRA PROPIA</h2>
                 <p>Refinamiento y procesado de trazos originales.</p>
             </div>
@@ -216,6 +219,7 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
+        // LÓGICA DIBUJO
         lienzo.addEventListener('mousedown', (e) => {
             if(modoActual !== 'comic') return;
             dibujando = true;
@@ -265,8 +269,8 @@
             if(!key) return alert("AUTH_KEY requerida");
             document.getElementById('loading').style.display = 'block';
             let pFinal = modoActual === 'propia' ? 
-                `Based on this sketch, apply: ${document.getElementById('promptRetoque').value}. Scene: ${document.getElementById('promptEscena').value}` :
-                `High-end art, style of ${document.getElementById('promptEstilo').value}. Scene: ${document.getElementById('promptEscena').value}`;
+                `High quality artistic refinement of this drawing: ${document.getElementById('promptRetoque').value}. Scene context: ${document.getElementById('promptEscena').value}` :
+                `Masterpiece quality, in the style of ${document.getElementById('promptEstilo').value}. Scene description: ${document.getElementById('promptEscena').value}`;
             
             try {
                 const res = await fetch('https://api.openai.com/v1/images/generations', {
