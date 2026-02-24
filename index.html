@@ -7,14 +7,11 @@
         :root { --primary: #ffcc00; --dark: #1a1a1a; --accent: #3498db; }
         body { font-family: 'Comic Sans MS', cursive; background: #eee; margin: 0; }
         
-        /* Pantalla de Inicio */
         #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         .selector-container { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
         .card { width: 250px; padding: 30px; background: white; border: 5px solid var(--dark); cursor: pointer; transition: 0.3s; box-shadow: 8px 8px 0px var(--dark); text-align: center; }
         .card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--primary); }
-        .card.obra-propia { border-color: var(--accent); }
         
-        /* Editores */
         .editor-container { display: none; padding: 20px; text-align: center; }
         
         .canvas-area { 
@@ -34,12 +31,13 @@
         .guia-linea { position: absolute; background: black; transform-origin: 0 50%; pointer-events: none; z-index: 10; }
         #linea-temporal { background: rgba(255, 0, 0, 0.5); height: 2px !important; z-index: 5; position: absolute; }
 
-        .controls { background: white; padding: 15px; border: 3px solid black; display: inline-block; margin-bottom: 10px; border-radius: 8px; max-width: 90%; }
-        input, select, textarea { padding: 8px; border: 2px solid black; margin: 5px; font-family: sans-serif; }
+        .controls { background: white; padding: 15px; border: 3px solid black; display: inline-block; margin-bottom: 10px; border-radius: 8px; max-width: 95%; }
+        input, textarea { padding: 8px; border: 2px solid black; margin: 5px; font-family: sans-serif; }
         button { padding: 10px 20px; font-weight: bold; border: 3px solid black; cursor: pointer; background: var(--primary); margin: 5px; }
-        #loading { display: none; color: #e67e22; font-weight: bold; font-size: 1.2em; }
+        #loading { display: none; color: #e67e22; font-weight: bold; font-size: 1.1em; margin: 10px; }
         
         .hidden { display: none !important; }
+        .label-instruccion { display: block; font-weight: bold; margin-top: 10px; text-transform: uppercase; font-size: 0.8em; }
     </style>
 </head>
 <body>
@@ -47,32 +45,41 @@
     <div id="home-screen">
         <h1>AI COMIC STUDIO MASTER</h1>
         <div class="selector-container">
-            <div class="card" onclick="abrir('ilustracion')"><h2>🎨 ILUSTRACIÓN</h2><p>Una sola imagen épica.</p></div>
-            <div class="card" onclick="abrir('comic')"><h2>📚 CÓMIC / MANGA</h2><p>Dibuja paneles y crea viñetas.</p></div>
-            <div class="card obra-propia" onclick="abrir('propia')"><h2>✍️ OBRA PROPIA</h2><p>Sube tu dibujo y deja que la IA lo termine.</p></div>
+            <div class="card" onclick="abrir('ilustracion')"><h2>🎨 ILUSTRACIÓN</h2><p>Crea desde cero con estilos de autores.</p></div>
+            <div class="card" onclick="abrir('comic')"><h2>📚 CÓMIC</h2><p>Dibuja paneles y mezcla mangakas.</p></div>
+            <div class="card" style="border-color:var(--accent)" onclick="abrir('propia')"><h2>✍️ OBRA PROPIA</h2><p>Mejora o colorea tu propio dibujo.</p></div>
         </div>
     </div>
 
     <div id="editor-screen" class="editor-container">
         <div class="controls">
-            <input type="password" id="apiKey" placeholder="Tu OpenAI API Key">
-            <button onclick="irAHome()">⬅ Volver</button>
+            <input type="password" id="apiKey" placeholder="Tu API Key (sk-...)">
+            <button onclick="location.reload()">⬅ Volver al Menú</button>
             <hr>
             
-            <div id="zona-subida" class="hidden">
-                <p>1. Sube tu dibujo (boceto o lineart):</p>
-                <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
+            <div id="zona-estilos">
+                <span class="label-instruccion">Mezcla de autores y estilo:</span>
+                <textarea id="promptEstilo" rows="2" style="width: 80%;" placeholder="Ej: Estilo mezcla de Kentaro Miura y Akira Toriyama..."></textarea>
             </div>
 
-            <p>2. Describe el estilo (puedes mezclar mangakas):</p>
-            <textarea id="promptIA" rows="2" style="width: 80%;" placeholder="Ej: Mezcla de Kentaro Miura y Eiichiro Oda, muy detallado, colores épicos..."></textarea>
+            <div id="zona-subida" class="hidden">
+                <span class="label-instruccion">1. Sube tu boceto:</span>
+                <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
+                <span class="label-instruccion">2. ¿Qué retoque quieres?</span>
+                <textarea id="promptRetoque" rows="2" style="width: 80%;" placeholder="Ej: Colorear digitalmente respetando las líneas, añadir sombras épicas..."></textarea>
+            </div>
+
+            <div id="zona-desc-general">
+                <span class="label-instruccion">Descripción de la escena:</span>
+                <textarea id="promptEscena" rows="2" style="width: 80%;" placeholder="¿Qué está pasando en el dibujo?"></textarea>
+            </div>
             
             <br>
-            <button id="btnGenerar" onclick="generarArte()">✨ HACER MAGIA</button>
-            <button id="btnLimpiar" onclick="limpiarLienzo()">Limpiar Todo</button>
+            <button onclick="generarArte()">✨ LANZAR IA</button>
+            <button onclick="limpiarLienzo()" style="background:#ff4444; color:white;">Limpiar Todo</button>
         </div>
         
-        <div id="loading">🚀 La IA está procesando tu obra... Ten paciencia.</div>
+        <div id="loading">🚀 Procesando... Esto puede tardar unos 15 segundos.</div>
 
         <div class="canvas-area" id="lienzo">
             <div id="linea-temporal" class="guia-linea" style="display:none"></div>
@@ -91,35 +98,29 @@
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('editor-screen').style.display = 'block';
             
-            // Si es Obra Propia, mostramos el botón de subir archivo
+            // Lógica de visibilidad de controles
             if(modo === 'propia') {
+                document.getElementById('zona-estilos').classList.add('hidden');
                 document.getElementById('zona-subida').classList.remove('hidden');
-                document.getElementById('btnLimpiar').innerText = "Quitar Imagen";
+                document.getElementById('zona-desc-general').querySelector('.label-instruccion').innerText = "Contexto para la IA:";
             } else {
+                document.getElementById('zona-estilos').classList.remove('hidden');
                 document.getElementById('zona-subida').classList.add('hidden');
-                document.getElementById('btnLimpiar').innerText = "Borrar Líneas";
             }
-        }
-
-        function irAHome() {
-            location.reload(); // Forma más rápida de resetear todo
         }
 
         function previsualizarImagen(event) {
             const reader = new FileReader();
-            reader.onload = function() {
-                lienzo.style.backgroundImage = `url('${reader.result}')`;
-            }
+            reader.onload = function() { lienzo.style.backgroundImage = `url('${reader.result}')`; }
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // --- DIBUJO (Solo para modo Cómic) ---
+        // LÓGICA DIBUJO PANELES (Solo en modo Cómic)
         lienzo.addEventListener('mousedown', (e) => {
             if(modoActual !== 'comic') return;
             dibujando = true;
             const rect = lienzo.getBoundingClientRect();
-            xInicio = e.clientX - rect.left;
-            yInicio = e.clientY - rect.top;
+            xInicio = e.clientX - rect.left; yInicio = e.clientY - rect.top;
             lineaTemporal.style.display = 'block';
         });
 
@@ -148,41 +149,40 @@
             if (Math.abs(x2-x1) < 5) return;
             const nl = document.createElement('div');
             nl.className = 'guia-linea real-line';
-            nl.style.height = '5px';
+            nl.style.height = '6px';
             actualizarLinea(nl, x1, y1, x2, y2);
             lienzo.appendChild(nl);
         }
 
         function limpiarLienzo() {
-            lienzo.innerHTML = '<div id="linea-temporal" class="guia-linea" style="display:none"></div>';
+            const lines = lienzo.querySelectorAll('.real-line');
+            lines.forEach(l => l.remove());
             lienzo.style.backgroundImage = 'none';
         }
 
-        // --- IA ---
         async function generarArte() {
             const key = document.getElementById('apiKey').value;
-            const prompt = document.getElementById('promptIA').value;
-            if(!key || !prompt) return alert("Falta API Key o descripción");
+            if(!key) return alert("Pon tu API Key");
+
+            let promptFinal = "";
+            if(modoActual === 'propia') {
+                promptFinal = `Basado en este dibujo original, realiza los siguientes cambios: ${document.getElementById('promptRetoque').value}. Contexto: ${document.getElementById('promptEscena').value}`;
+            } else {
+                promptFinal = `Ilustración en el estilo de ${document.getElementById('promptEstilo').value}. Escena: ${document.getElementById('promptEscena').value}. Si hay bordes negros de paneles, respeta la composición.`;
+            }
 
             document.getElementById('loading').style.display = 'block';
             
-            // Aquí enviamos la petición a DALL-E 3
             try {
                 const response = await fetch('https://api.openai.com/v1/images/generations', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-                    body: JSON.stringify({
-                        model: "dall-e-3",
-                        prompt: `Ilustración de alta calidad, ${prompt}. Si hay paneles negros encima, respétalos.`,
-                        n: 1, size: "1024x1024"
-                    })
+                    body: JSON.stringify({ model: "dall-e-3", prompt: promptFinal, n: 1, size: "1024x1024" })
                 });
                 const data = await response.json();
                 if(data.data) {
                     lienzo.style.backgroundImage = `url('${data.data[0].url}')`;
-                } else {
-                    alert("Error: " + data.error.message);
-                }
+                } else { alert("Error: " + data.error.message); }
             } catch (e) { alert("Error de red"); }
             finally { document.getElementById('loading').style.display = 'none'; }
         }
