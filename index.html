@@ -8,7 +8,7 @@
         :root { 
             --gold: #c5a059; 
             --dark-bg: #0a0a0a; 
-            --panel-bg: rgba(20, 20, 20, 0.95);
+            --panel-bg: rgba(18, 18, 18, 0.96);
             --text-light: #e0e0e0;
             --border: #2a2a2a;
         }
@@ -16,8 +16,11 @@
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--dark-bg);
-            /* GRABADO ARTÍSTICO EN CÓDIGO (SVG) */
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5a059' fill-opacity='0.03'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zM0 75c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5zm80 0c0-2.761-2.239-5-5-5s-5 2.239-5 5 2.239 5 5 5 5-2.239 5-5zM37 17c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5zm40 0c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            /* NUEVO GRABADO: Más visible y artístico */
+            background-image: 
+                linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8)),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0c10 15 30 15 40 0s10 35 0 50-30 15-40 0c-10 15-30 15-40 0s-10-35 0-50 30-15 40 0z' fill='%23c5a059' fill-opacity='0.15'/%3E%3Cpath d='M0 50c10 15 30 15 40 0s10 35 0 50-30 15-40 0c-10 15-30 15-40 0s-10-35 0-50 30-15 40 0z' fill='%23c5a059' fill-opacity='0.1'/%3E%3C/svg%3E");
+            background-attachment: fixed;
             color: var(--text-light);
             margin: 0; 
             min-height: 100vh;
@@ -25,18 +28,17 @@
 
         h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
-        /* EFECTO DE LUZ CENTRAL */
         #home-screen { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             height: 100vh;
-            background: radial-gradient(circle, rgba(197, 160, 89, 0.03) 0%, rgba(10,10,10,0.8) 70%);
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.05) 0%, rgba(10,10,10,0) 80%);
         }
 
-        .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 5px; text-shadow: 0 0 20px rgba(197, 160, 89, 0.2); }
-        .subtitle { font-size: 0.75rem; color: #444; text-transform: uppercase; letter-spacing: 7px; margin-bottom: 50px; }
+        .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 5px; text-shadow: 0 0 30px rgba(197, 160, 89, 0.3); }
+        .subtitle { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 7px; margin-bottom: 50px; }
 
         .selector-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; z-index: 10; }
 
@@ -48,18 +50,19 @@
             cursor: pointer; 
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .card:hover { 
             border-color: var(--gold);
             transform: translateY(-12px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            background: rgba(30, 30, 30, 0.98);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 20px rgba(197, 160, 89, 0.1);
+            background: rgba(25, 25, 25, 0.98);
         }
 
         .card h2 { font-size: 1.1rem; color: var(--gold); margin-bottom: 15px; }
-        .card p { font-size: 0.8rem; color: #666; line-height: 1.8; }
+        .card p { font-size: 0.8rem; color: #888; line-height: 1.8; }
 
         /* EDITOR */
         .editor-container { display: none; padding: 40px 20px; text-align: center; animation: fadeIn 1s; }
@@ -74,14 +77,14 @@
             display: inline-block; 
             width: 95%;
             max-width: 1000px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-            backdrop-filter: blur(15px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            backdrop-filter: blur(20px);
         }
 
         select, input, textarea { 
             background: #050505;
             border: 1px solid var(--border);
-            color: #aaa;
+            color: #bbb;
             padding: 14px;
             margin: 10px 0;
             width: 90%;
@@ -105,7 +108,7 @@
             margin: 10px;
         }
 
-        button:hover { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
+        button:hover { background: var(--gold); color: black; box-shadow: 0 0 25px rgba(197, 160, 89, 0.4); }
 
         .canvas-area { 
             background: #fff;
@@ -121,8 +124,8 @@
         .guia-linea { position: absolute; background: #000; transform-origin: 0 50%; pointer-events: none; }
         #linea-temporal { background: var(--gold); height: 1px !important; opacity: 0.5; }
         
-        .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #444; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; }
-        .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.75rem; display: block; text-align: left; margin-left: 5%; margin-bottom: 5px; opacity: 0.7; }
+        .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #555; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; }
+        .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.75rem; display: block; text-align: left; margin-left: 5%; margin-bottom: 5px; opacity: 0.8; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -185,7 +188,7 @@
                 </div>
             </div>
             
-            <button id="btn-add-vineta" onclick="anadirRecuadroVineta()" style="border: none; font-size: 1.5rem; opacity: 0.3;">+</button>
+            <button id="btn-add-vineta" onclick="anadirRecuadroVineta()" style="border: none; font-size: 1.5rem; opacity: 0.4;">+</button>
             
             <div style="margin-top: 40px; border-top: 1px solid #222; padding-top: 20px;">
                 <button onclick="generarArte()">Sintetizar Obra</button>
@@ -200,7 +203,6 @@
     </div>
 
     <script>
-        // Mantenemos toda tu lógica funcional
         let modoActual = '';
         let contadorVinetas = 1;
 
