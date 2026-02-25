@@ -5,131 +5,44 @@
     <title>M-Studio | Premium AI Creative Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --gold: #c5a059; 
-            --dark-bg: #0f0f0f; 
-            --panel-bg: #1a1a1a;
-            --text-light: #e0e0e0;
-            --border: #333;
-        }
-
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--dark-bg); 
-            color: var(--text-light);
-            margin: 0; 
-            min-height: 100vh;
-        }
-
+        :root { --gold: #c5a059; --dark-bg: #0f0f0f; --panel-bg: #1a1a1a; --text-light: #e0e0e0; --border: #333; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--text-light); margin: 0; min-height: 100vh; }
         h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
-        /* PANTALLA DE INICIO - M-STUDIO */
-        #home-screen { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh;
-            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
-        }
-
+        #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%); }
         .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 10px; }
         .subtitle { font-size: 0.9rem; color: #666; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 50px; }
 
         .selector-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
-
-        .card { 
-            width: 280px; 
-            padding: 40px 20px; 
-            background: var(--panel-bg); 
-            border: 1px solid var(--border); 
-            cursor: pointer; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-        }
-
-        /* Efecto hover igual para todas las tarjetas */
-        .card:hover { 
-            border-color: var(--gold);
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
+        .card { width: 280px; padding: 40px 20px; background: var(--panel-bg); border: 1px solid var(--border); cursor: pointer; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
+        .card:hover { border-color: var(--gold); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .card h2 { font-size: 1.2rem; color: var(--gold); margin-bottom: 15px; }
         .card p { font-size: 0.85rem; color: #888; line-height: 1.6; }
 
-        /* EDITOR */
         .editor-container { display: none; padding: 20px; text-align: center; animation: fadeIn 0.8s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 950px;
-            margin: 0 auto 20px auto;
-            padding: 10px;
-        }
+        .header-controls { display: flex; justify-content: space-between; align-items: center; max-width: 950px; margin: 0 auto 20px auto; padding: 10px; }
+        .main-panel { background: var(--panel-bg); padding: 30px; border: 1px solid var(--border); display: inline-block; border-radius: 4px; width: 90%; max-width: 950px; margin-bottom: 30px; }
 
-        .main-panel { 
-            background: var(--panel-bg); 
-            padding: 30px; 
-            border: 1px solid var(--border); 
-            display: inline-block; 
-            border-radius: 4px;
-            max-width: 950px;
-            margin-bottom: 30px;
-        }
-
-        input, textarea { 
-            background: #0a0a0a;
-            border: 1px solid var(--border);
-            color: white;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 2px;
-            width: 90%;
-            font-family: 'Inter', sans-serif;
-        }
-
+        input, textarea { background: #0a0a0a; border: 1px solid var(--border); color: white; padding: 12px; margin: 8px 0; border-radius: 2px; width: 90%; font-family: 'Inter', sans-serif; }
         input:focus, textarea:focus { outline: 1px solid var(--gold); border-color: var(--gold); }
 
-        button { 
-            padding: 12px 25px; 
-            font-family: 'Cinzel', serif;
-            font-weight: bold; 
-            border: 1px solid var(--gold); 
-            cursor: pointer; 
-            background: transparent; 
-            color: var(--gold);
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.75rem;
-        }
+        .vineta-input-group { margin-bottom: 15px; text-align: left; margin-left: 5%; }
+        .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8rem; display: block; margin-bottom: 5px; }
 
+        button { padding: 12px 25px; font-family: 'Cinzel', serif; font-weight: bold; border: 1px solid var(--gold); cursor: pointer; background: transparent; color: var(--gold); transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; }
         button:hover { background: var(--gold); color: black; }
         .btn-back { border-color: #555; color: #888; }
         .btn-back:hover { border-color: var(--gold); color: var(--gold); background: transparent; }
+        .btn-add { padding: 5px 15px; font-size: 1.2rem; margin-top: 10px; }
 
-        /* ÁREA DE LIENZO */
-        .canvas-area { 
-            background: #fff;
-            margin: 0 auto; 
-            width: 500px;  
-            height: 700px; 
-            position: relative; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            background-size: cover;
-            background-position: center;
-        }
-
+        .canvas-area { background: #fff; margin: 0 auto; width: 500px; height: 700px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8); background-size: cover; background-position: center; }
         .guia-linea { position: absolute; background: #000; transform-origin: 0 50%; pointer-events: none; z-index: 10; }
         #linea-temporal { background: var(--gold); height: 1px !important; z-index: 5; opacity: 0.6; position: absolute; }
 
         #loading { display: none; color: var(--gold); letter-spacing: 2px; margin: 20px; font-family: 'Cinzel', serif; font-size: 0.9rem; }
         .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #555; font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 10px; }
-        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -138,25 +51,14 @@
     <div id="home-screen">
         <div class="logo-main">M-STUDIO</div>
         <div class="subtitle">Premium AI Creative Suite</div>
-        
         <div class="selector-container">
-            <div class="card" onclick="abrir('ilustracion')">
-                <h2>ILUSTRACIÓN</h2>
-                <p>Síntesis de estilos maestros para piezas únicas.</p>
-            </div>
-            <div class="card" onclick="abrir('comic')">
-                <h2>CÓMIC</h2>
-                <p>Arquitectura de paneles y narrativa visual avanzada.</p>
-            </div>
-            <div class="card" onclick="abrir('propia')">
-                <h2>OBRA PROPIA</h2>
-                <p>Refinamiento y procesado de trazos originales.</p>
-            </div>
+            <div class="card" onclick="abrir('ilustracion')"><h2>ILUSTRACIÓN</h2><p>Síntesis de estilos maestros.</p></div>
+            <div class="card" onclick="abrir('comic')"><h2>CÓMIC</h2><p>Arquitectura de paneles y guion secuencial.</p></div>
+            <div class="card" onclick="abrir('propia')"><h2>OBRA PROPIA</h2><p>Refinamiento de trazos originales.</p></div>
         </div>
     </div>
 
     <div id="editor-screen" class="editor-container">
-        
         <div class="header-controls">
             <input type="password" id="apiKey" placeholder="AUTH_KEY" style="width: 200px; margin: 0;">
             <button class="btn-back" onclick="location.reload()">⬅ MENÚ PRINCIPAL</button>
@@ -165,29 +67,32 @@
         <div class="main-panel">
             <div id="zona-estilos">
                 <span class="label-instruccion">Estética Maestro</span>
-                <textarea id="promptEstilo" rows="2" placeholder="Mezcla de autores, técnica, iluminación..."></textarea>
+                <textarea id="promptEstilo" rows="1" placeholder="Ej: Mezcla de autor A y autor B..."></textarea>
             </div>
 
             <div id="zona-subida" class="hidden">
                 <span class="label-instruccion">Documento Original</span>
                 <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
-                <span class="label-instruccion">Instrucciones de Procesado</span>
-                <textarea id="promptRetoque" rows="2" placeholder="Coloreado, sombreado, entintado..."></textarea>
+                <textarea id="promptRetoque" rows="1" placeholder="Instrucciones de procesado..."></textarea>
             </div>
 
-            <div id="zona-desc-general">
-                <span class="label-instruccion">Descripción Narrativa</span>
-                <textarea id="promptEscena" rows="2" placeholder="Detalles de la escena..."></textarea>
+            <div id="contenedor-vinetas">
+                <span class="label-instruccion">Guion Narrativo</span>
+                <div class="vineta-input-group">
+                    <span class="vineta-label">Viñeta 1</span>
+                    <textarea class="prompt-vineta" rows="2" placeholder="Describe lo que ocurre en el primer panel..."></textarea>
+                </div>
             </div>
             
-            <div style="margin-top: 20px;">
+            <button id="btn-add-vineta" class="btn-add" onclick="anadirRecuadroVineta()">+</button>
+            
+            <div style="margin-top: 30px;">
                 <button onclick="generarArte()">Generar Obra</button>
                 <button class="btn-back" style="border:none; text-decoration: underline;" onclick="limpiarLienzo()">Limpiar Lienzo</button>
             </div>
         </div>
         
         <div id="loading">PROCESANDO SECUENCIA ARTÍSTICA...</div>
-
         <div class="canvas-area" id="lienzo">
             <div id="linea-temporal" class="guia-linea" style="display:none"></div>
         </div>
@@ -195,23 +100,82 @@
 
     <script>
         let modoActual = '';
-        const lienzo = document.getElementById('lienzo');
-        const lineaTemporal = document.getElementById('linea-temporal');
-        let dibujando = false;
-        let xInicio, yInicio;
+        let contadorVinetas = 1;
 
         function abrir(modo) {
             modoActual = modo;
             document.getElementById('home-screen').classList.add('hidden');
             document.getElementById('editor-screen').style.display = 'block';
-            if(modo === 'propia') {
-                document.getElementById('zona-estilos').classList.add('hidden');
-                document.getElementById('zona-subida').classList.remove('hidden');
+            
+            const btnAdd = document.getElementById('btn-add-vineta');
+            const zonaEstilos = document.getElementById('zona-estilos');
+            const zonaSubida = document.getElementById('zona-subida');
+
+            if(modo === 'comic') {
+                btnAdd.classList.remove('hidden');
             } else {
-                document.getElementById('zona-estilos').classList.remove('hidden');
-                document.getElementById('zona-subida').classList.add('hidden');
+                btnAdd.classList.add('hidden');
+            }
+
+            if(modo === 'propia') {
+                zonaEstilos.classList.add('hidden');
+                zonaSubida.classList.remove('hidden');
+            } else {
+                zonaEstilos.classList.remove('hidden');
+                zonaSubida.classList.add('hidden');
             }
         }
+
+        function anadirRecuadroVineta() {
+            contadorVinetas++;
+            const contenedor = document.getElementById('contenedor-vinetas');
+            const nuevoGrupo = document.createElement('div');
+            nuevoGrupo.className = 'vineta-input-group';
+            nuevoGrupo.innerHTML = `
+                <span class="vineta-label">Viñeta ${contadorVinetas}</span>
+                <textarea class="prompt-vineta" rows="2" placeholder="Describe la siguiente acción..."></textarea>
+            `;
+            contenedor.appendChild(nuevoGrupo);
+        }
+
+        async function generarArte() {
+            const key = document.getElementById('apiKey').value;
+            if(!key) return alert("AUTH_KEY requerida");
+
+            // Recopilamos todos los textos de las viñetas
+            const vinetas = document.querySelectorAll('.prompt-vineta');
+            let guionCompleto = "";
+            vinetas.forEach((v, index) => {
+                if(v.value.trim() !== "") {
+                    guionCompleto += `Panel ${index + 1}: ${v.value}. `;
+                }
+            });
+
+            let pFinal = "";
+            if(modoActual === 'propia') {
+                pFinal = `Artistic refinement: ${document.getElementById('promptRetoque').value}. Context: ${guionCompleto}`;
+            } else {
+                pFinal = `Professional comic page, ${modoActual === 'comic' ? 'multi-panel layout' : 'single illustration'}, style of ${document.getElementById('promptEstilo').value}. Narrative: ${guionCompleto}`;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const res = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+                    body: JSON.stringify({ model: "dall-e-3", prompt: pFinal, n: 1, size: "1024x1024" })
+                });
+                const data = await res.json();
+                if(data.data) { document.getElementById('lienzo').style.backgroundImage = `url('${data.data[0].url}')`; }
+                else { alert(data.error.message); }
+            } catch (e) { alert("Error de conexión"); }
+            finally { document.getElementById('loading').style.display = 'none'; }
+        }
+
+        // --- LÓGICA DE DIBUJO (Mantenida) ---
+        const lienzo = document.getElementById('lienzo');
+        const lineaTemporal = document.getElementById('linea-temporal');
+        let dibujando = false; let xInicio, yInicio;
 
         function previsualizarImagen(event) {
             const reader = new FileReader();
@@ -219,7 +183,6 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // LÓGICA DIBUJO
         lienzo.addEventListener('mousedown', (e) => {
             if(modoActual !== 'comic') return;
             dibujando = true;
@@ -231,7 +194,12 @@
         window.addEventListener('mousemove', (e) => {
             if (!dibujando) return;
             const rect = lienzo.getBoundingClientRect();
-            actualizarLinea(lineaTemporal, xInicio, yInicio, e.clientX - rect.left, e.clientY - rect.top);
+            const dist = Math.sqrt((e.clientX - rect.left - xInicio)**2 + (e.clientY - rect.top - yInicio)**2);
+            const angulo = Math.atan2(e.clientY - rect.top - yInicio, e.clientX - rect.left - xInicio) * 180 / Math.PI;
+            lineaTemporal.style.width = dist + 'px';
+            lineaTemporal.style.left = xInicio + 'px';
+            lineaTemporal.style.top = yInicio + 'px';
+            lineaTemporal.style.transform = `rotate(${angulo}deg)`;
         });
 
         window.addEventListener('mouseup', (e) => {
@@ -239,50 +207,24 @@
             dibujando = false;
             lineaTemporal.style.display = 'none';
             const rect = lienzo.getBoundingClientRect();
-            crearLineaFija(xInicio, yInicio, e.clientX - rect.left, e.clientY - rect.top);
+            const xFin = e.clientX - rect.left;
+            const yFin = e.clientY - rect.top;
+            if (Math.abs(xFin - xInicio) > 5) {
+                const nl = document.createElement('div');
+                nl.className = 'guia-linea real-line';
+                nl.style.height = '4px';
+                const dist = Math.sqrt((xFin-xInicio)**2 + (yFin-yInicio)**2);
+                const angulo = Math.atan2(yFin-yInicio, xFin-xInicio) * 180 / Math.PI;
+                nl.style.width = dist + 'px'; nl.style.left = xInicio + 'px'; nl.style.top = yInicio + 'px';
+                nl.style.transform = `rotate(${angulo}deg)`;
+                lienzo.appendChild(nl);
+            }
         });
-
-        function actualizarLinea(el, x1, y1, x2, y2) {
-            const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-            const angulo = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
-            el.style.width = dist + 'px'; el.style.left = x1 + 'px'; el.style.top = y1 + 'px';
-            el.style.transform = `rotate(${angulo}deg)`;
-        }
-
-        function crearLineaFija(x1, y1, x2, y2) {
-            if (Math.abs(x2-x1) < 5) return;
-            const nl = document.createElement('div');
-            nl.className = 'guia-linea real-line';
-            nl.style.height = '4px';
-            actualizarLinea(nl, x1, y1, x2, y2);
-            lienzo.appendChild(nl);
-        }
 
         function limpiarLienzo() {
             const lines = lienzo.querySelectorAll('.real-line');
             lines.forEach(l => l.remove());
             lienzo.style.backgroundImage = 'none';
-        }
-
-        async function generarArte() {
-            const key = document.getElementById('apiKey').value;
-            if(!key) return alert("AUTH_KEY requerida");
-            document.getElementById('loading').style.display = 'block';
-            let pFinal = modoActual === 'propia' ? 
-                `High quality artistic refinement of this drawing: ${document.getElementById('promptRetoque').value}. Scene context: ${document.getElementById('promptEscena').value}` :
-                `Masterpiece quality, in the style of ${document.getElementById('promptEstilo').value}. Scene description: ${document.getElementById('promptEscena').value}`;
-            
-            try {
-                const res = await fetch('https://api.openai.com/v1/images/generations', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-                    body: JSON.stringify({ model: "dall-e-3", prompt: pFinal, n: 1, size: "1024x1024" })
-                });
-                const data = await res.json();
-                if(data.data) { lienzo.style.backgroundImage = `url('${data.data[0].url}')`; }
-                else { alert(data.error.message); }
-            } catch (e) { alert("Connection Error"); }
-            finally { document.getElementById('loading').style.display = 'none'; }
         }
     </script>
 </body>
