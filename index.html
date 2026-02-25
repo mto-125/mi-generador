@@ -18,8 +18,8 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--navy);
             
-            /* DISEÑO INSPIRADO EN LA ANTIGUA GRECIA (GRECA Y VOLUTAS) */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23b9f2ff' fill-opacity='0.08'%3E%3Cpath d='M0 0h20v5H5v10h10V7h5v13H0V0zm100 0h20v20h-13v-5h10V5h-10V0h-7zm0 100h7v13h-20v-13h5v5h10v-10h-13v-5h13v10zM0 100h20v7h-10v10H0v-17zm50-80c10 0 20 10 20 20s-10 20-20 20-20-10-20-20 10-20 20-20zm0 5c-8.284 0-15 6.716-15 15s6.716 15 15 15 15-6.716 15-15-6.716-15-15-15zm10 45c5 0 10 5 10 10s-5 10-10 10-10-5-10-10 5-10 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+            /* DISEÑO: CORONAS DE LAUREL + GRECA GRIEGA */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23b9f2ff' fill-opacity='0.09'%3E%3Cpath d='M50 20c-8 0-15 5-15 12s5 10 7 10-2-3-2-7 5-8 10-8 10 4 10 8-4 7-2 7 7-3 7-10-7-12-15-12zM50 80c-8 0-15 5-15 12s5 10 7 10-2-3-2-7 5-8 10-8 10 4 10 8-4 7-2 7 7-3 7-10-7-12-15-12zM0 45h10v-5h5v15H0v-10zm100 0h-10v-5h-5v15h15v-10zM45 0v10h5V5h15V0h-20zm0 100v-10h5v5h15v5h-20z'/%3E%3C/g%3E%3C/svg%3E");
             
             background-attachment: fixed;
             color: var(--text-light);
@@ -27,7 +27,7 @@
             min-height: 100vh;
         }
 
-        /* Mantengo el resto igual para no romper nada */
+        /* --- RESTO DEL ESTILO MANTENIDO --- */
         h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
         #home-screen { 
@@ -66,7 +66,6 @@
         .card h2 { font-size: 1.1rem; color: var(--gold); margin-bottom: 15px; }
         .card p { font-size: 0.8rem; color: #a0aec0; line-height: 1.8; }
 
-        /* Estilos del editor (iguales para mantener funcionalidad) */
         .editor-container { display: none; padding: 40px 20px; text-align: center; animation: fadeIn 1s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -81,13 +80,15 @@
             backdrop-filter: blur(20px);
         }
 
-        select, input, textarea { 
+        textarea { 
             background: rgba(0, 5, 15, 0.6);
             border: 1px solid var(--border);
             color: #cbd5e0;
             padding: 14px;
             margin: 10px 0;
             width: 90%;
+            font-family: 'Inter', sans-serif;
+            resize: none;
         }
 
         button { 
@@ -105,17 +106,6 @@
 
         button:hover { background: var(--gold); color: var(--navy); }
 
-        .canvas-area { 
-            background: #fff;
-            margin: 40px auto; 
-            width: 500px;  
-            height: 700px; 
-            position: relative; 
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-            background-size: cover;
-            background-position: center;
-        }
-        
         .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #4a5568; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; }
         .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.75rem; display: block; text-align: left; margin-left: 5%; margin-bottom: 5px; }
         .hidden { display: none !important; }
@@ -143,16 +133,5 @@
         </div>
     </div>
 
-    <div id="editor-screen" class="editor-container">
-        </div>
-
-    <script>
-        // ... (Tu lógica JS de abrir(), generarArte(), etc.)
-        function abrir(modo) {
-            document.getElementById('home-screen').classList.add('hidden');
-            document.getElementById('editor-screen').style.display = 'block';
-            // Resto de la lógica...
-        }
-    </script>
-</body>
+    </body>
 </html>
