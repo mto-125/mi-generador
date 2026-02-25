@@ -73,14 +73,17 @@
             <div id="zona-subida" class="hidden">
                 <span class="label-instruccion">Documento Original</span>
                 <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)">
-                <textarea id="promptRetoque" rows="1" placeholder="Instrucciones de procesado..."></textarea>
+                <span class="label-instruccion">Instrucciones de Procesado</span>
+                <textarea id="promptRetoque" rows="1" placeholder="Ej: Coloreado digital, añadir sombras épicas..."></textarea>
             </div>
 
-            <div id="contenedor-vinetas">
-                <span class="label-instruccion">Guion Narrativo</span>
-                <div class="vineta-input-group">
-                    <span class="vineta-label">Viñeta 1</span>
-                    <textarea class="prompt-vineta" rows="2" placeholder="Describe lo que ocurre en el primer panel..."></textarea>
+            <div id="contenedor-guion">
+                <span id="label-guion" class="label-instruccion">Guion Narrativo</span>
+                <div id="contenedor-vinetas">
+                    <div class="vineta-input-group">
+                        <span id="vineta-label-1" class="vineta-label">Viñeta 1</span>
+                        <textarea id="prompt-principal" class="prompt-vineta" rows="2" placeholder="Describe lo que ocurre..."></textarea>
+                    </div>
                 </div>
             </div>
             
@@ -110,11 +113,27 @@
             const btnAdd = document.getElementById('btn-add-vineta');
             const zonaEstilos = document.getElementById('zona-estilos');
             const zonaSubida = document.getElementById('zona-subida');
+            const contenedorGuion = document.getElementById('contenedor-guion');
+            const labelGuion = document.getElementById('label-guion');
+            const vLabel1 = document.getElementById('vineta-label-1');
+            const pPrincipal = document.getElementById('prompt-principal');
 
+            // Resetear contenedores
             if(modo === 'comic') {
                 btnAdd.classList.remove('hidden');
-            } else {
+                contenedorGuion.classList.remove('hidden');
+                labelGuion.innerText = "Guion Narrativo";
+                vLabel1.classList.remove('hidden');
+                pPrincipal.placeholder = "Describe lo que ocurre en el primer panel...";
+            } else if(modo === 'ilustracion') {
                 btnAdd.classList.add('hidden');
+                contenedorGuion.classList.remove('hidden');
+                labelGuion.innerText = "Descripción de la Ilustración";
+                vLabel1.classList.add('hidden');
+                pPrincipal.placeholder = "Describe lo que ocurre en la ilustración...";
+            } else if(modo === 'propia') {
+                btnAdd.classList.add('hidden');
+                contenedorGuion.classList.add('hidden'); // En Obra Propia usamos solo Instrucciones de Procesado
             }
 
             if(modo === 'propia') {
@@ -142,20 +161,21 @@
             const key = document.getElementById('apiKey').value;
             if(!key) return alert("AUTH_KEY requerida");
 
-            // Recopilamos todos los textos de las viñetas
-            const vinetas = document.querySelectorAll('.prompt-vineta');
             let guionCompleto = "";
-            vinetas.forEach((v, index) => {
-                if(v.value.trim() !== "") {
-                    guionCompleto += `Panel ${index + 1}: ${v.value}. `;
-                }
-            });
+            if(modoActual !== 'propia') {
+                const vinetas = document.querySelectorAll('.prompt-vineta');
+                vinetas.forEach((v, index) => {
+                    if(v.value.trim() !== "") {
+                        guionCompleto += (modoActual === 'comic' ? `Panel ${index + 1}: ` : "") + v.value + ". ";
+                    }
+                });
+            }
 
             let pFinal = "";
             if(modoActual === 'propia') {
-                pFinal = `Artistic refinement: ${document.getElementById('promptRetoque').value}. Context: ${guionCompleto}`;
+                pFinal = `High-end artistic refinement. Instructions: ${document.getElementById('promptRetoque').value}`;
             } else {
-                pFinal = `Professional comic page, ${modoActual === 'comic' ? 'multi-panel layout' : 'single illustration'}, style of ${document.getElementById('promptEstilo').value}. Narrative: ${guionCompleto}`;
+                pFinal = `Masterpiece quality, style of ${document.getElementById('promptEstilo').value}. ${modoActual === 'comic' ? 'Comic page layout' : 'Single illustration'}. Description: ${guionCompleto}`;
             }
 
             document.getElementById('loading').style.display = 'block';
@@ -172,7 +192,7 @@
             finally { document.getElementById('loading').style.display = 'none'; }
         }
 
-        // --- LÓGICA DE DIBUJO (Mantenida) ---
+        // LÓGICA DE DIBUJO
         const lienzo = document.getElementById('lienzo');
         const lineaTemporal = document.getElementById('linea-temporal');
         let dibujando = false; let xInicio, yInicio;
