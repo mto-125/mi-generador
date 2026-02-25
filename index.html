@@ -8,18 +8,16 @@
         :root { 
             --gold: #c5a059; 
             --dark-bg: #0a0a0a; 
-            --panel-bg: rgba(26, 26, 26, 0.9);
+            --panel-bg: rgba(20, 20, 20, 0.95);
             --text-light: #e0e0e0;
-            --border: #333;
+            --border: #2a2a2a;
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--dark-bg);
-            /* Patrón de grabado sutil (Líneas de trama artística) */
-            background-image: 
-                radial-gradient(circle at 2px 2px, rgba(197, 160, 89, 0.05) 1px, transparent 0);
-            background-size: 32px 32px;
+            /* GRABADO ARTÍSTICO EN CÓDIGO (SVG) */
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5a059' fill-opacity='0.03'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zM0 75c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5zm80 0c0-2.761-2.239-5-5-5s-5 2.239-5 5 2.239 5 5 5 5-2.239 5-5zM37 17c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5zm40 0c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             color: var(--text-light);
             margin: 0; 
             min-height: 100vh;
@@ -27,45 +25,45 @@
 
         h1, h2, .logo-main { font-family: 'Cinzel', serif; letter-spacing: 3px; }
 
-        /* PANTALLA DE INICIO */
+        /* EFECTO DE LUZ CENTRAL */
         #home-screen { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             height: 100vh;
-            background: radial-gradient(circle, rgba(26,26,26,0) 0%, rgba(10,10,10,1) 80%);
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.03) 0%, rgba(10,10,10,0.8) 70%);
         }
 
-        .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 10px; text-shadow: 0 0 20px rgba(197, 160, 89, 0.2); }
-        .subtitle { font-size: 0.8rem; color: #555; text-transform: uppercase; letter-spacing: 6px; margin-bottom: 50px; }
+        .logo-main { font-size: 4rem; color: var(--gold); margin-bottom: 5px; text-shadow: 0 0 20px rgba(197, 160, 89, 0.2); }
+        .subtitle { font-size: 0.75rem; color: #444; text-transform: uppercase; letter-spacing: 7px; margin-bottom: 50px; }
 
         .selector-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; z-index: 10; }
 
         .card { 
             width: 280px; 
-            padding: 45px 25px; 
+            padding: 50px 25px; 
             background: var(--panel-bg); 
             border: 1px solid var(--border); 
             cursor: pointer; 
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
 
         .card:hover { 
             border-color: var(--gold);
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-            background: rgba(35, 35, 35, 0.95);
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            background: rgba(30, 30, 30, 0.98);
         }
 
         .card h2 { font-size: 1.1rem; color: var(--gold); margin-bottom: 15px; }
-        .card p { font-size: 0.8rem; color: #777; line-height: 1.7; }
+        .card p { font-size: 0.8rem; color: #666; line-height: 1.8; }
 
         /* EDITOR */
         .editor-container { display: none; padding: 40px 20px; text-align: center; animation: fadeIn 1s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .header-controls { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto 30px auto; }
 
@@ -74,29 +72,23 @@
             padding: 40px; 
             border: 1px solid var(--border); 
             display: inline-block; 
-            border-radius: 2px;
             width: 95%;
             max-width: 1000px;
             box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
 
         select, input, textarea { 
             background: #050505;
             border: 1px solid var(--border);
-            color: #ccc;
+            color: #aaa;
             padding: 14px;
             margin: 10px 0;
-            border-radius: 0;
             width: 90%;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
         }
 
         select:focus, input:focus, textarea:focus { outline: 1px solid var(--gold); border-color: var(--gold); color: white; }
-
-        .vineta-input-group { margin-bottom: 20px; text-align: left; margin-left: 5%; border-left: 1px solid #333; padding-left: 20px; }
-        .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.75rem; display: block; margin-bottom: 8px; opacity: 0.8; }
 
         button { 
             padding: 14px 30px; 
@@ -113,11 +105,8 @@
             margin: 10px;
         }
 
-        button:hover { background: var(--gold); color: black; box-shadow: 0 0 15px rgba(197, 160, 89, 0.4); }
-        .btn-back { border-color: #444; color: #666; }
-        .btn-back:hover { border-color: #888; color: #eee; background: transparent; }
+        button:hover { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(197, 160, 89, 0.3); }
 
-        /* LIENZO */
         .canvas-area { 
             background: #fff;
             margin: 40px auto; 
@@ -131,8 +120,9 @@
 
         .guia-linea { position: absolute; background: #000; transform-origin: 0 50%; pointer-events: none; }
         #linea-temporal { background: var(--gold); height: 1px !important; opacity: 0.5; }
-
+        
         .label-instruccion { display: block; text-align: left; margin-left: 5%; font-weight: 600; color: #444; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; }
+        .vineta-label { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.75rem; display: block; text-align: left; margin-left: 5%; margin-bottom: 5px; opacity: 0.7; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -159,30 +149,29 @@
     </div>
 
     <div id="editor-screen" class="editor-container">
-        
         <div class="header-controls">
             <input type="password" id="apiKey" placeholder="ACCESS_TOKEN" style="width: 220px; margin: 0;">
-            <button class="btn-back" onclick="location.reload()">⬅ SALIR AL MENÚ</button>
+            <button onclick="location.reload()" style="border-color: #444; color: #666;">⬅ VOLVER</button>
         </div>
 
         <div class="main-panel">
             <div id="zona-estilos">
                 <span class="label-instruccion">Firma Estética</span>
-                <textarea id="promptEstilo" rows="1" placeholder="Ej: Fusión de Takehiko Inoue y Moebius, alto contraste..."></textarea>
+                <textarea id="promptEstilo" rows="1" placeholder="Ej: Fusión de Akira Toriyama y Moebius..."></textarea>
             </div>
 
             <div id="zona-subida" class="hidden">
                 <span class="label-instruccion">Documento de Origen</span>
                 <input type="file" id="fileInput" accept="image/*" onchange="previsualizarImagen(event)" style="border: none; background: transparent;">
                 <span class="label-instruccion">Instrucciones de Refinado</span>
-                <textarea id="promptRetoque" rows="1" placeholder="Ej: Entintado profundo, coloreado estilo vintage..."></textarea>
+                <textarea id="promptRetoque" rows="1" placeholder="Ej: Coloreado digital, sombras profundas..."></textarea>
             </div>
 
             <div id="zona-lectura" class="hidden">
                 <span class="label-instruccion">Arquitectura de Lectura</span>
                 <select id="tipoLectura">
-                    <option value="sentido de lectura occidental (de izquierda a derecha)">Occidental (Marvel/DC Style)</option>
-                    <option value="sentido de lectura oriental (manga, de derecha a izquierda)">Oriental (Manga Style)</option>
+                    <option value="sentido de lectura occidental">Occidental (Marvel Style)</option>
+                    <option value="sentido de lectura oriental">Oriental (Manga Style)</option>
                 </select>
             </div>
 
@@ -191,27 +180,27 @@
                 <div id="contenedor-vinetas">
                     <div class="vineta-input-group">
                         <span id="vineta-label-1" class="vineta-label">Secuencia I</span>
-                        <textarea id="prompt-principal" class="prompt-vineta" rows="2" placeholder="Describa la acción principal..."></textarea>
+                        <textarea id="prompt-principal" class="prompt-vineta" rows="2" placeholder="Describa la acción..."></textarea>
                     </div>
                 </div>
             </div>
             
-            <button id="btn-add-vineta" onclick="anadirRecuadroVineta()" style="border: none; font-size: 1.5rem; opacity: 0.5;">+</button>
+            <button id="btn-add-vineta" onclick="anadirRecuadroVineta()" style="border: none; font-size: 1.5rem; opacity: 0.3;">+</button>
             
             <div style="margin-top: 40px; border-top: 1px solid #222; padding-top: 20px;">
                 <button onclick="generarArte()">Sintetizar Obra</button>
-                <button class="btn-back" style="border:none; font-size: 0.6rem;" onclick="limpiarLienzo()">Limpiar Lienzo</button>
+                <button onclick="limpiarLienzo()" style="border:none; font-size: 0.6rem; color: #444;">Limpiar Lienzo</button>
             </div>
         </div>
         
-        <div id="loading" style="display:none; color: var(--gold); margin-top: 20px; letter-spacing: 4px; font-family: 'Cinzel';">SINTETIZANDO IMAGEN...</div>
-
+        <div id="loading" style="display:none; color: var(--gold); margin-top: 20px; letter-spacing: 4px; font-family: 'Cinzel';">SINTETIZANDO...</div>
         <div class="canvas-area" id="lienzo">
             <div id="linea-temporal" class="guia-linea" style="display:none"></div>
         </div>
     </div>
 
     <script>
+        // Mantenemos toda tu lógica funcional
         let modoActual = '';
         let contadorVinetas = 1;
 
@@ -258,7 +247,7 @@
             const romanos = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
             const contenedor = document.getElementById('contenedor-vinetas');
             const div = document.createElement('div');
-            div.className = 'vineta-input-group';
+            div.style.marginBottom = "20px";
             div.innerHTML = `<span class="vineta-label">Secuencia ${romanos[contadorVinetas-1] || contadorVinetas}</span>
                              <textarea class="prompt-vineta" rows="2" placeholder="Siguiente acción..."></textarea>`;
             contenedor.appendChild(div);
@@ -266,24 +255,18 @@
 
         async function generarArte() {
             const key = document.getElementById('apiKey').value;
-            if(!key) return alert("ACCESS_TOKEN requerido.");
-
+            if(!key) return alert("TOKEN Requerido.");
+            document.getElementById('loading').style.display = 'block';
+            
             let guion = "";
             document.querySelectorAll('.prompt-vineta').forEach((v, i) => {
                 if(v.value.trim()) guion += `Panel ${i+1}: ${v.value}. `;
             });
 
-            const lectura = document.getElementById('tipoLectura').value;
-            const estilo = document.getElementById('promptEstilo').value;
-            
-            let pFinal = "";
-            if(modoActual === 'propia') {
-                pFinal = `Professional artistic refinement on original sketch. ${document.getElementById('promptRetoque').value}`;
-            } else {
-                pFinal = `Masterpiece, style of ${estilo}. ${modoActual === 'comic' ? 'Comic page with multiple panels, ' + lectura : 'Single illustration'}. Narrative: ${guion}`;
-            }
+            let pFinal = modoActual === 'propia' ? 
+                `High-end refinement. Instructions: ${document.getElementById('promptRetoque').value}` :
+                `Masterpiece, style of ${document.getElementById('promptEstilo').value}. ${modoActual === 'comic' ? 'Comic page, ' + document.getElementById('tipoLectura').value : 'Illustration'}. Narrative: ${guion}`;
 
-            document.getElementById('loading').style.display = 'block';
             try {
                 const res = await fetch('https://api.openai.com/v1/images/generations', {
                     method: 'POST',
@@ -297,7 +280,6 @@
             finally { document.getElementById('loading').style.display = 'none'; }
         }
 
-        // --- DIBUJO ---
         const lienzo = document.getElementById('lienzo');
         const lineaTemporal = document.getElementById('linea-temporal');
         let dibujando = false; let x1, y1;
